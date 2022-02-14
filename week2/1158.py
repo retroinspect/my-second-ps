@@ -1,39 +1,21 @@
-from bisect import bisect
 
-def getFriends(s, k):
-    friends = 0
-    p = len(s) - 1
-    i = 0
-    while i < p:
-        end = min(i+k, p)
+from collections import deque as Queue
 
-        # search max j such that s[i] <= s[j] <= s[i] + k where i <= j <= end
-        l = bisect(s, s[i] + k, i, end)
-        x = l-i+1
-        friends += x*(x-1)//2
-        print(x)
-        i = l
-
-    return friends
-
-import sys
-input = sys.stdin.readline
-
+answer = []
 N, K = map(int, input().split(' '))
-hash_table = dict()
-for i in range(N):
-    name = input().strip()
-    if len(name) in hash_table.keys():
-        hash_table[len(name)].append(i)
+
+q = Queue(list(range(1, N+1)))
+
+count = 0
+while len(q) > 0:
+    size = len(q)
+    count += 1
+    popped = q.popleft()
+    # print(count, popped, (K % size), size)
+    if (K % size) == count or ((K % size) == 0 and count == size):
+        answer.append(str(popped))
+        count = 0
     else:
-        hash_table[len(name)] = [i]
+        q.append(popped)
 
-print(hash_table)
-
-answer = 0
-
-for list in hash_table.values():
-    print(list)
-    answer += getFriends(list, K)
-
-print(answer)
+print('<%s>' % ', '.join(answer))
